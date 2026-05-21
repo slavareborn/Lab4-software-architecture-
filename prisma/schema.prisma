@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Оскільки в лабі 1 була SQLite
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(uuid())
+  email String @unique
+  loans Loan[]
+}
+
+model Book {
+  id              String @id @default(uuid())
+  title           String
+  availableCopies Int    @default(1)
+  loans           Loan[]
+}
+
+model Loan {
+  id         String    @id @default(uuid())
+  borrowDate DateTime  @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  
+  bookId     String
+  userId     String
+  
+  book       Book      @relation(fields: [bookId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
+}
